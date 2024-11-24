@@ -6,52 +6,50 @@ services:
     image: atendai/evolution-api:homolog
     restart: always
     depends_on:
-      - redis
       - postgres
     ports:
       - 8080:8080
     volumes:
-      - evoapi_instances:/evolution/instances
+      - evolution_instances:/evolution/instances
     networks:
       - evoapi-net
     env_file:
       - .env
 
-  redis:
-    container_name: evoapi_redis
-    image: redis:latest
-    networks:
-      - evoapi-net
-    command: >
-      redis-server --port 6379 --appendonly yes
-    volumes:
-      - evoapi_redis:/data
-    ports:
-      - 6379:6379
-    restart: always
-
   postgres:
     container_name: evoapi_postgres
     image: postgres:15
-    networks:
-      - evoapi-net
     command: ["postgres", "-c", "max_connections=1000"]
     restart: always
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=evoapi_user
-      - POSTGRES_PASSWORD=sua_senha_segura
+      - POSTGRES_USER=evoapi
+      - POSTGRES_PASSWORD=6n*C%%7%Zzr2
       - POSTGRES_DB=evoapi_db
     volumes:
-      - evoapi_postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - evoapi-net
+
+  redis:
+    container_name: evoapi_redis
+    image: redis:latest
+    command: >
+      redis-server --port 6379 --appendonly yes
+    volumes:
+      - evolution_redis:/data
+    ports:
+      - 6379:6379
+    restart: always
+    networks:
+      - evoapi-net
 
 volumes:
-  evoapi_instances:
-  evoapi_redis:
-  evoapi_postgres:
+  evolution_instances:
+  evolution_redis:
+  postgres_data:
 
 networks:
   evoapi-net:
-    name: evoapi-net
-    driver: bridge
+    external: true
