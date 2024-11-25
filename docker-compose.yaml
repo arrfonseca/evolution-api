@@ -1,5 +1,6 @@
+version: '3.9'
 services:
-  api:
+  evolution-api:
     container_name: evolution_api
     image: atendai/evolution-api:homolog
     restart: always
